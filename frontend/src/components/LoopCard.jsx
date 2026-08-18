@@ -183,7 +183,7 @@ if(showComment){
           <div className='w-[30px] h-[30px] md:w-[40px] md:h-[40px] border-2 border-black rounded-full cursor-pointer overflow-hidden' >
             <img src={loop.author?.profileImage || dp} alt="" className='w-full object-cover' />
           </div>
-          <div className='w-[120px] font-semibold truncate text-white '>{loop.author.userName}</div>
+          <div className='w-[120px] font-semibold truncate text-white '>{loop.author?.userName || "Unknown User"}</div>
        
         <FollowButton targetUserId={loop.author?._id} tailwind={"px-[10px] py-[5px] text-white border-2 text-[14px] rounded-2xl border-white"}/>
          </div>
