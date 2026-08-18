@@ -30,8 +30,17 @@ app.use("/api/message",messageRouter)
 app.use("/api/ai", aiRouter);
 
 
-server.listen(port , ()=>{
-    connectDb()
-     console.log(`🚀 Server Started on Port ${port}`);
-})
+const startServer = async () => {
+    try {
+        await connectDb();
 
+        server.listen(port, () => {
+            console.log(`🚀 Server Started on Port ${port}`);
+        });
+
+    } catch (error) {
+        console.error("❌ Failed to start server:", error);
+    }
+};
+
+startServer();
