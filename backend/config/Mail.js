@@ -1,21 +1,22 @@
 import nodemailer from "nodemailer";
-import dotenv from "dotenv";
-
-dotenv.config();
 
 const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
-    port: 465,
-    secure: true,
+    port: 587,
+    secure: false,
 
     auth: {
         user: process.env.EMAIL,
         pass: process.env.EMAIL_PASS,
     },
 
-    connectionTimeout: 10000,
-    greetingTimeout: 10000,
-    socketTimeout: 10000,
+    tls: {
+        rejectUnauthorized: false
+    },
+
+    connectionTimeout: 20000,
+    greetingTimeout: 20000,
+    socketTimeout: 20000,
 });
 
 const sendMail = async (to, otp) => {
@@ -24,12 +25,16 @@ const sendMail = async (to, otp) => {
 
         const info = await transporter.sendMail({
             from: process.env.EMAIL,
-            to: to,
+            to,
             subject: "Reset Your Password",
-            html: `<p>Your OTP is <b>${otp}</b>. It expires in 5 minutes.</p>`
+            html: `
+                <h2>Password Reset</h2>
+                <p>Your OTP is: <b>${otp}</b></p>
+                <p>This OTP expires in 5 minutes.</p>
+            `
         });
 
-        console.log("✅ EMAIL SENT SUCCESSFULLY:", info.messageId);
+        console.log("✅ EMAIL SENT:", info.messageId);
 
         return info;
 
