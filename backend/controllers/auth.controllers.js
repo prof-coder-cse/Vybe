@@ -86,8 +86,12 @@ export const signOut=async (req,res)=>{
 }
 
 export const sendOtp = async (req, res) => {
+    console.log("🔥 SEND OTP API HIT");
+
     try {
         const { email } = req.body;
+
+        console.log("Email received:", email);
 
         const user = await User.findOne({ email });
 
@@ -107,21 +111,24 @@ export const sendOtp = async (req, res) => {
 
         await user.save();
 
+        console.log("OTP saved. Sending mail...");
+
         await sendMail(email, otp);
+
+        console.log("EMAIL SENT SUCCESSFULLY");
 
         return res.status(200).json({
             message: "OTP sent successfully"
         });
 
     } catch (error) {
-        console.log("Send OTP Error:", error);
+        console.log("❌ SEND OTP ERROR:", error);
 
         return res.status(500).json({
-            message: error.message || "Failed to send OTP"
+            message: error.message
         });
     }
 };
-
 export const verifyOtp=async (req,res)=>{
     try {
        const {email,otp}=req.body
