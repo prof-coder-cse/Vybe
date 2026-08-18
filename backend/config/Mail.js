@@ -1,42 +1,29 @@
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 
-const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 587,
-    secure: false,
-
-    auth: {
-        user: process.env.EMAIL,
-        pass: process.env.EMAIL_PASS,
-    },
-
-    tls: {
-        rejectUnauthorized: false
-    },
-
-    connectionTimeout: 20000,
-    greetingTimeout: 20000,
-    socketTimeout: 20000,
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const sendMail = async (to, otp) => {
     try {
-        console.log("📧 Connecting to Gmail...");
+        console.log("📧 Sending email with Resend...");
 
-        const info = await transporter.sendMail({
-            from: process.env.EMAIL,
-            to,
+        const { data, error } = await resend.emails.send({
+            from: "Vybe <onboarding@resend.dev>",
+            to: [to],
             subject: "Reset Your Password",
             html: `
-                <h2>Password Reset</h2>
-                <p>Your OTP is: <b>${otp}</b></p>
+                <h2>Reset Your Password</h2>
+                <p>Your OTP is <b>${otp}</b></p>
                 <p>This OTP expires in 5 minutes.</p>
             `
         });
 
-        console.log("✅ EMAIL SENT:", info.messageId);
+        if (error) {
+            throw new Error(error.message);
+        }
 
-        return info;
+        console.log("✅ EMAIL SENT SUCCESSFULLY:", data);
+
+        return data;
 
     } catch (error) {
         console.error("❌ MAIL ERROR:", error);
