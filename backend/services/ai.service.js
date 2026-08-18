@@ -36,7 +36,7 @@ Example:
 ]`;
 
    const completion = await client.chat.completions.create({
-    model: "inclusionai/ling-3.0-tiny:free",
+   model: "openrouter/free",
     messages: [
         {
             role: "user",
