@@ -18,7 +18,7 @@ const port = process.env.PORT || 5000;
 app.use(cors({
     origin: [
         "http://localhost:5173",
-        "https://vybe-sbl1.onrender.com"
+        "https://vybe-nxw3.onrender.com"
     ],
     credentials: true
 }));
