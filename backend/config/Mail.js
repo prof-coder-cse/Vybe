@@ -1,34 +1,23 @@
-import { Resend } from "resend";
+import nodemailer from "nodemailer"
+import dotenv from "dotenv"
+dotenv.config()
+const transporter = nodemailer.createTransport({
+  service: "Gmail",
+  port: 465,
+  secure: true, // true for 465, false for other ports
+  auth: {
+    user:process.env.EMAIL,
+    pass:process.env.EMAIL_PASS,
+  },
+});
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const sendMail=async (to,otp)=>{
+await transporter.sendMail({
+    from:`${process.env.EMAIL}`,
+    to,
+    subject: "Reset Your Password",
+    html:`<p>Your OTP for password reset is <b>${otp}</b>. It expires in 5 minutes.</p>`
+})
+}
 
-const sendMail = async (to, otp) => {
-    try {
-        console.log("📧 Sending email with Resend...");
-
-        const { data, error } = await resend.emails.send({
-            from: "Vybe <onboarding@resend.dev>",
-            to: [to],
-            subject: "Reset Your Password",
-            html: `
-                <h2>Reset Your Password</h2>
-                <p>Your OTP is <b>${otp}</b></p>
-                <p>This OTP expires in 5 minutes.</p>
-            `
-        });
-
-        if (error) {
-            throw new Error(error.message);
-        }
-
-        console.log("✅ EMAIL SENT SUCCESSFULLY:", data);
-
-        return data;
-
-    } catch (error) {
-        console.error("❌ MAIL ERROR:", error);
-        throw error;
-    }
-};
-
-export default sendMail;
+export default sendMail
