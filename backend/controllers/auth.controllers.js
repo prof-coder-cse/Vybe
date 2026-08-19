@@ -76,14 +76,25 @@ export const signIn=async (req,res)=>{
 }
 
 
-export const signOut=async (req,res)=>{
+export const signOut = async (req, res) => {
     try {
-        res.clearCookie("token")
-        return res.status(200).json({message:"sign out successfully"})
+
+        res.clearCookie("token", {
+            httpOnly: true,
+            secure: false,
+            sameSite: "Strict"
+        });
+
+        return res.status(200).json({
+            message: "Sign out successfully"
+        });
+
     } catch (error) {
-        return res.status(500).json({message:`signout error ${error}`})
+        return res.status(500).json({
+            message: `signout error ${error}`
+        });
     }
-}
+};
 
 export const sendOtp = async (req, res) => {
     console.log("🔥 SEND OTP API HIT");
