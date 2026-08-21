@@ -8,14 +8,7 @@ const client = new OpenAI({
 export const generateComments = async (caption) => {
 
     const prompt = `
-Generate exactly 3 Instagram style comments.
-
-Caption:
-"${caption}"
-
-You are an Instagram user.
-
-Generate exactly 3 short Instagram comments for this post.
+Generate exactly 3 Instagram-style comments for this post.
 
 Caption:
 "${caption}"
@@ -23,35 +16,57 @@ Caption:
 Rules:
 - Sound like a real human.
 - Casual and engaging.
-- Maximum 5 words.
-- Use at most one emoji.
+- Maximum 5 words per comment.
+- Use at most one emoji per comment.
 - No hashtags.
-- Return ONLY a JSON array.
+- Return ONLY a valid JSON array.
 
 Example:
 [
-"Absolutely love this 😍",
-"Such a vibe 🔥",
-"This is beautiful ❤️"
-]`;
+  "Absolutely love this 😍",
+  "Such a vibe 🔥",
+  "This is beautiful ❤️"
+]
+`;
 
-   const completion = await client.chat.completions.create({
-   model: "openrouter/free",
-    messages: [
-        {
-            role: "user",
-            content: prompt,
-        },
-    ],
-    temperature: 0.8,
-});
+    const completion = await client.chat.completions.create({
+        model: "openrouter/free",
+        messages: [
+            {
+                role: "user",
+                content: prompt,
+            },
+        ],
+        temperature: 0.8,
+    });
 
-    let text = completion.choices[0].message.content;
+    console.log(
+        "AI Response:",
+        JSON.stringify(completion, null, 2)
+    );
 
-    text = text
+    const text = completion?.choices?.[0]?.message?.content;
+
+    if (!text) {
+        console.error("Invalid AI response:", completion);
+
+        throw new Error(
+            "AI returned an empty response"
+        );
+    }
+
+    const cleanedText = text
         .replace(/```json/g, "")
         .replace(/```/g, "")
         .trim();
 
-    return JSON.parse(text);
+    try {
+        return JSON.parse(cleanedText);
+    } catch (error) {
+        console.error("Invalid JSON from AI:", cleanedText);
+
+        throw new Error(
+            "AI returned invalid JSON"
+        );
+    }
 };
